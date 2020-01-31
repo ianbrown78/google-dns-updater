@@ -1,6 +1,7 @@
 # The main python file that does the work
 from google.cloud import dns
 from google.oauth2 import service_account
+import google.auth
 import config
 import time
 import sys, urllib
