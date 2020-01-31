@@ -30,7 +30,7 @@ def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
 @app.route('/', methods=['POST'])
-def home():
+def main(request):
   query_parameters = request.args
   
   # Assign our parameters
@@ -98,33 +98,3 @@ def execute_change_set(changes):
     changes.reload()
 
 app.run()
-
-# def main():
-#   # Get the query params
-#   query_string = sys.stdin.read()
-#   multiform = urllib.parse.parse_qs(query_string)
-
-#   # Grab our configuration
-#   cfg = config.cfg
-
-#   # Setup the client and zone
-#   client = dns.Client(project=cfg.gcpProject)
-#   zone = client.zone(cfg.gcpZoneName, cfg.gcpDnsDomain)
-
-#   # Get the records in batches
-#   records, page_token = zone.list_resource_record_sets()
-#   while page_token is not None:
-#     next_batch, page_token = zone.list_resource_record_sets(
-#       page_token=page_token)  # API request
-#     records.extend(next_batch)
-
-#   # create an update
-#   record_set = zone.resource_record_set(
-#     param['host'], 'A', cfg.ttl, [param['ip']])
-#   changes = zone.changes()
-#   changes.add_record_set(record_set)
-#   changes.create()  # API request
-#   while changes.status != 'done':
-#     print('Waiting for changes to complete')
-#     time.sleep(20)     # or whatever interval is appropriate
-#     changes.reload()   # API request
