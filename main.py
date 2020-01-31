@@ -8,27 +8,29 @@ import sys, urllib
 import flask
 from flask import request, jsonify
 
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+# app = flask.Flask(__name__)
+# app.config["DEBUG"] = True
 
-# Grab our configuration
-cfg = config.cfg
 
-# Configure the client & zone
-if (len(cfg.gcpAuthKeyJsonFile) == 0):
-  credentials, project = google.auth.default()
-else:
-  credentials = service_account.Credentials.from_service_account_file(cfg.gcpAuthKeyJsonFile)
-client = dns.Client(project=cfg.gcpProject, credentials=credentials)
-zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
-
-records = ""
-changes = zone.changes()
 
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
-def main_post(request):
+def main(request):
+  # Grab our configuration
+  cfg = config.cfg
+
+  # Configure the client & zone
+  if (len(cfg.gcpAuthKeyJsonFile) == 0):
+    credentials, project = google.auth.default()
+  else:
+    credentials = service_account.Credentials.from_service_account_file(cfg.gcpAuthKeyJsonFile)
+  client = dns.Client(project=cfg.gcpProject, credentials=credentials)
+  zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
+
+  records = ""
+  changes = zone.changes()
+
   query_parameters = request.args
   
   # Assign our parameters
