@@ -1,3 +1,4 @@
 flask>=1.0.0
 google-cloud-dns==0.31.0
+google-auth
 python_dotenv
