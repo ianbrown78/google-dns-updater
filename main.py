@@ -25,12 +25,10 @@ zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
 records = ""
 changes = zone.changes()
 
-@app.errorhandler(404)
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
-@app.route('/', methods=['POST'])
-def main(request):
+def main_post(request):
   query_parameters = request.args
   
   # Assign our parameters
