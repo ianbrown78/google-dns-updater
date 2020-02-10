@@ -28,6 +28,9 @@ changes = zone.changes()
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
+def page_unauthorized(e):
+    return "<h1>401</h1><p>You are not authorized to access this resource.</p>", 401
+
 def main(request):
   query_parameters = request.args
   
