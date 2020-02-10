@@ -45,7 +45,7 @@ def main(request):
 
   # Check the key
   if not (check_key(key)):
-    return page_not_found(404)
+    return page_unauthorized(401)
 
   # Get a list of the current records
   records = get_records()
