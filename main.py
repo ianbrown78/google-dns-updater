@@ -25,7 +25,7 @@ else:
   log_name = 'cloudfunctions.googleapis.com%2Fcloud-functions' 
   res = Resource(type="cloud_function", 
                labels={
-                   "function_name": cfg.function_name, 
+                   "function_name": cfg.functionName, 
                    "region": cfg.region
                },
               )
