@@ -16,6 +16,7 @@ class config():
     
     self.app = os.getenv("app", "")
 
+    self.functionName = os.getenv('FUNCTION_NAME', "")
     self.gcpProject = os.getenv("project", "")
     self.gcpAuthKeyJsonFile = os.getenv("authKeyJsonFile", "")
     self.gcpDnsZoneName = os.getenv("dnsZoneName", "")
