@@ -114,7 +114,8 @@ def execute_change_set(changes):
   logger.log_struct({"message": "Change set executed"}, resource=res, severity='INFO')
   changes.create()
   while changes.status != 'done':
-    logger.log_struct({"message": "Waiting for changes to complete. Change status: %s", changes.status}, resource=res, severity='INFO')
+    message = "Waiting for changes to complete. Change status is {}".format(changes.status)
+    logger.log_struct({"message": message}, resource=res, severity='INFO')
     time.sleep(20)
     changes.reload()
 
