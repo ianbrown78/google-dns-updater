@@ -83,6 +83,7 @@ def get_records(client=client, zone=zone):
 def test_for_record_change(old_ip, new_ip):
   logging.info("Existing IP is {}".format(old_ip))
   if (old_ip != new_ip):
+    logging.info("Found record to update.")
     return True
   else:
     return False
