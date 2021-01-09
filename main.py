@@ -53,7 +53,8 @@ def main(request):
   host = query_parameters.get('host')
   ip = query_parameters.get('ip')
   key = query_parameters.get('key')
-  logger.log_struct({"message": "IP to update to is: ", ip}, resource=res, severity='INFO')
+  message = "IP to update is {}".format(ip)
+  logger.log_struct({"message": message}, resource=res, severity='INFO')
 
   # Check we have the required parameters
   if not (host and ip and key):
@@ -91,7 +92,8 @@ def get_records(client=client, zone=zone):
   return zone.list_resource_record_sets(max_results=100, page_token=None, client=client)
 
 def test_for_record_change(old_ip, new_ip):
-  logger.log_struct({"message": "Existing IP is: ", old_ip}, resource=res, severity='INFO')
+  message = "Existing IP is {}".format(old_ip)
+  logger.log_struct({"message": message}, resource=res, severity='INFO')
   if (old_ip != new_ip):
     return True
   else:
