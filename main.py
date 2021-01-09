@@ -1,7 +1,7 @@
 # The main python file that does the work
 from google.cloud import dns
 from google.cloud import logging
-from google.cloud.logging.resource import Resource
+from google.cloud.logging import Resource
 from google.oauth2 import service_account
 import google.auth
 import config
