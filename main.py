@@ -65,7 +65,8 @@ def main(request):
 
   # Get a list of the current records
   records = get_records()
-  
+  return records
+
   # Check for matching records
   for record in records:
     if (host == record.name):
