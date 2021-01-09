@@ -32,7 +32,7 @@ def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
 def page_unauthorized(e):
-    logging.error("You are not authorized to access this resource.)
+    logging.error("You are not authorized to access this resource.")
     return "<h1>401</h1><p>You are not authorized to access this resource.</p>", 401
 
 def main(request):
