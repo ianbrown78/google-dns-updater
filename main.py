@@ -53,7 +53,8 @@ def main(request):
   host = query_parameters.get('host')
   ip = query_parameters.get('ip')
   key = query_parameters.get('key')
-  logger.log_struct({"message": "IP to update to is: %s", ip}, resource=res, severity='INFO')
+  print('IP: ' + ip)
+  #logger.log_struct({"message": "IP to update to is: %s", ip}, resource=res, severity='INFO')
 
   # Check we have the required parameters
   if not (host and ip and key):
