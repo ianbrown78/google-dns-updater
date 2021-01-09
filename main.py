@@ -21,15 +21,16 @@ if (len(cfg.gcpAuthKeyJsonFile) == 0):
   credentials, project = google.auth.default()
 else:
   credentials = service_account.Credentials.from_service_account_file(cfg.gcpAuthKeyJsonFile)
-  log_client = logging.Client()
-  log_name = 'cloudfunctions.googleapis.com%2Fcloud-functions' 
-  res = Resource(type="cloud_function", 
+  
+log_client = logging.Client()
+log_name = 'cloudfunctions.googleapis.com%2Fcloud-functions' 
+res = Resource(type="cloud_function", 
                labels={
                    "function_name": cfg.functionName, 
                    "region": cfg.region
                },
               )
-  logger = log_client.logger(log_name.format(cfg.project))
+logger = log_client.logger(log_name.format(cfg.project))
 
 client = dns.Client(project=cfg.gcpProject, credentials=credentials)
 zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
