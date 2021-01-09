@@ -27,10 +27,10 @@ log_name = 'cloudfunctions.googleapis.com%2Fcloud-functions'
 res = Resource(type="cloud_function", 
                labels={
                    "function_name": cfg.functionName, 
-                   "region": cfg.region
+                   "region": cfg.gcpRegion
                },
               )
-logger = log_client.logger(log_name.format(cfg.project))
+logger = log_client.logger(log_name.format(cfg.gcpProject))
 
 client = dns.Client(project=cfg.gcpProject, credentials=credentials)
 zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
