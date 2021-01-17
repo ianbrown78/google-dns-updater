@@ -1,5 +1,5 @@
 ian-test-261906-0ef550aded99.json
 venv/
-src/__pycache__
+__pycache__
 .env
 .DS_Store

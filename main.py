@@ -1,14 +1,16 @@
 # The main python file that does the work
 from google.cloud import dns
 from google.oauth2 import service_account
+import google.auth
 import config
+import logging
 import time
 import sys, urllib
 import flask
 from flask import request, jsonify
 
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+# app = flask.Flask(__name__)
+# app.config["DEBUG"] = True
 
 # Grab our configuration
 cfg = config.cfg
@@ -18,24 +20,30 @@ if (len(cfg.gcpAuthKeyJsonFile) == 0):
   credentials, project = google.auth.default()
 else:
   credentials = service_account.Credentials.from_service_account_file(cfg.gcpAuthKeyJsonFile)
+
 client = dns.Client(project=cfg.gcpProject, credentials=credentials)
 zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
 
 records = ""
 changes = zone.changes()
 
-@app.errorhandler(404)
 def page_not_found(e):
+    logging.error("The resource could not be found.")
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
-@app.route('/', methods=['POST'])
-def home():
+def page_unauthorized(e):
+    logging.error("You are not authorized to access this resource.")
+    return "<h1>401</h1><p>You are not authorized to access this resource.</p>", 401
+
+def main(request):
+  logging.info("Update request started.")
   query_parameters = request.args
   
   # Assign our parameters
   host = query_parameters.get('host')
   ip = query_parameters.get('ip')
   key = query_parameters.get('key')
+  logging.info("IP to update is {}".format(ip))
 
   # Check we have the required parameters
   if not (host and ip and key):
@@ -43,11 +51,11 @@ def home():
 
   # Check the key
   if not (check_key(key)):
-    return page_not_found(404)
+    return page_unauthorized(401)
 
   # Get a list of the current records
   records = get_records()
-  
+
   # Check for matching records
   for record in records:
     if (host == record.name):
@@ -73,9 +81,13 @@ def get_records(client=client, zone=zone):
   return zone.list_resource_record_sets(max_results=100, page_token=None, client=client)
 
 def test_for_record_change(old_ip, new_ip):
+  logging.info("Existing IP is {}".format(old_ip))
+  logging.info("New IP is {}".format(new_ip))
   if (old_ip != new_ip):
+    logging.info("IP addresses match. No update required.")
     return True
   else:
+    logging.info("IP addresses do no match. Update required.")
     return False
 
 def create_record_set(host, record_type, ip):
@@ -90,40 +102,11 @@ def add_to_change_set(record_set, atype):
     return changes.add_record_set(record_set)
 
 def execute_change_set(changes):
+  logging.info("Change set executed")
   changes.create()
   while changes.status != 'done':
-    print('Waiting for changes to complete')
+    logging.info("Waiting for changes to complete. Change status is {}".format(changes.status))
     time.sleep(20)
     changes.reload()
 
-app.run()
-
-# def main():
-#   # Get the query params
-#   query_string = sys.stdin.read()
-#   multiform = urllib.parse.parse_qs(query_string)
-
-#   # Grab our configuration
-#   cfg = config.cfg
-
-#   # Setup the client and zone
-#   client = dns.Client(project=cfg.gcpProject)
-#   zone = client.zone(cfg.gcpZoneName, cfg.gcpDnsDomain)
-
-#   # Get the records in batches
-#   records, page_token = zone.list_resource_record_sets()
-#   while page_token is not None:
-#     next_batch, page_token = zone.list_resource_record_sets(
-#       page_token=page_token)  # API request
-#     records.extend(next_batch)
-
-#   # create an update
-#   record_set = zone.resource_record_set(
-#     param['host'], 'A', cfg.ttl, [param['ip']])
-#   changes = zone.changes()
-#   changes.add_record_set(record_set)
-#   changes.create()  # API request
-#   while changes.status != 'done':
-#     print('Waiting for changes to complete')
-#     time.sleep(20)     # or whatever interval is appropriate
-#     changes.reload()   # API request
+#app.run()
