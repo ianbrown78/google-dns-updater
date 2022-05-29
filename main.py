@@ -47,9 +47,9 @@ def main(request):
 
     # Assign our parameters
     if request.args:
-        host = request.args.get['host']
-        ip = request.args.get['ip']
-        key = request.args.get['key']
+        host = request.args['host']
+        ip = request.args['ip']
+        key = request.args['key']
 
     # Check we have the required parameters
     if not (host and ip and key):
