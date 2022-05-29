@@ -10,7 +10,7 @@ from google.oauth2 import service_account
 import config
 
 # app = flask.Flask(__name__)
-# app.config["DEBUG"] = True
+app.config["DEBUG"] = True
 
 # Grab our configuration
 cfg = config.cfg
