@@ -10,7 +10,7 @@ from google.oauth2 import service_account
 import config
 
 # app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+# app.config["DEBUG"] = True
 
 # Grab our configuration
 cfg = config.cfg
@@ -45,11 +45,13 @@ def page_unauthorized(e):
 def main(request):
     logging.info("Update request started.")
 
+    request_args = request.args
+    
     # Assign our parameters
     if request.args:
-        host = request.args['host']
-        ip = request.args['ip']
-        key = request.args['key']
+        host = request_args['host']
+        ip = request_args['ip']
+        key = request_args['key']
 
     # Check we have the required parameters
     if not (host and ip and key):
