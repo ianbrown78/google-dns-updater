@@ -66,7 +66,7 @@ def main(request):
 
     # Check for matching records
     for record in records:
-        if host == record.name and record.type == "A":
+        if host == record.name and record.type == 'A':
             for data in record.rrdatas:
                 if test_for_record_change(data, ip):
                     add_to_change_set(record, 'delete')
