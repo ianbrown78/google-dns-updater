@@ -70,7 +70,7 @@ def main(request):
     for record in records:
         if host == record.name and record.record_type == 'A' and ipv4:
             for data in record.rrdatas:
-                if test_for_record_change(record.rrdatas, ipv4):
+                if test_for_record_change(data, ipv4):
                     add_to_change_set(record, 'delete')
                     add_to_change_set(create_record_set(host, record.record_type, ipv4), 'create')
                     execute_change_set(changes)
@@ -79,7 +79,7 @@ def main(request):
                     ret_val = "IPv4 record up to date.\n"
         if host == record.name and record.record_type == 'AAAA' and ipv6:
             for data in record.rrdatas:
-                if test_for_record_change(record.rrdatas, ipv6):
+                if test_for_record_change(data, ipv6):
                     add_to_change_set(record, 'delete')
                     add_to_change_set(create_record_set(host, record.record_type, ipv6), 'create')
                     execute_change_set(changes)
