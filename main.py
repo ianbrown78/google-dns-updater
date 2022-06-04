@@ -83,7 +83,7 @@ def main(request):
 				execute_change_set(changes)
 				ret_val += "IPv6 changed successful.\n"
 			else:
-				ret_val = "IPv6 Record up to date.\n"
+				ret_val += "IPv6 Record up to date.\n"
 
     return ret_val
 
