@@ -2,7 +2,7 @@
 
 This utility runs in Google Cloud Functions and allows for the remote update of DNS records from dynamic clients using a key.
 
-
+Support for IPv4 and IPv6
 
 ## Basic usage
 
