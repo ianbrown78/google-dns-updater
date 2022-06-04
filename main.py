@@ -52,6 +52,7 @@ def main(request):
     if request_args:
         host = request_args['host']
         ipv4 = request_args['ipv4']
+	ipv6 = request_args['ipv6']
         key = request_args['key']
 
     # Check we have the required parameters
