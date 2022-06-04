@@ -30,6 +30,7 @@ zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
 
 records = ""
 changes = zone.changes()
+ret_val = "No matching records."
 
 
 def page_not_found(e):
@@ -50,11 +51,11 @@ def main(request):
     # Assign our parameters
     if request_args:
         host = request_args['host']
-        ip = request_args['ip']
+        ipv4 = request_args['ipv4']
         key = request_args['key']
 
     # Check we have the required parameters
-    if not (host and ip and key):
+    if not (host and key and ipv4):
         return page_not_found(404)
 
     # Check the key
@@ -63,20 +64,28 @@ def main(request):
 
     # Get a list of the current records
     records = get_records()
+	
 
     # Check for matching records
     for record in records:
-        if host == record.name and record.record_type == 'A':
-            for data in record.rrdatas:
-                if test_for_record_change(data, ip):
-                    add_to_change_set(record, 'delete')
-                    add_to_change_set(create_record_set(host, record.record_type, ip), 'create')
-                    execute_change_set(changes)
-                    return "Change successful."
-                else:
-                    return "Record up to date."
+        if host == record.name and record.record_type == 'A' and ipv4:
+			if test_for_record_change(record.rrdatas, ipv4):
+				add_to_change_set(record, 'delete')
+				add_to_change_set(create_record_set(host, record.record_type, ipv4), 'create')
+				execute_change_set(changes)
+				ret_val = "IPv4 changed successful.\n"
+			else:
+				ret_val = "IPv4 record up to date.\n"
+		if host == record.name and record.record_type == 'AAAA' and ipv6:
+			if test_for_record_change(record.rrdatas, ipv6):
+				add_to_change_set(record, 'delete')
+				add_to_change_set(create_record_set(host, record.record_type, ipv6), 'create')
+				execute_change_set(changes)
+				ret_val += "IPv6 changed successful.\n"
+			else:
+				ret_val = "IPv6 Record up to date.\n"
 
-    return "No matching records."
+    return ret_val
 
 
 def check_key(key):
