@@ -32,7 +32,7 @@ IPADDRESS_V4=`curl https://api.ipify.org/?format=plain` &&
 IPADDRESS_V6=`curl https://api64.ipify.org/?format=plain` &&
 
 
-# toenniges.net
+# example.com
 curl -X POST <Function URL> -H "Content-Type:application/json" --data '{"host":"exaple.com.", "ipv4":"'$IPADDRESS_V4'", "ipv6":"'$IPADDRESS_V6'", "key":"<API service key>"}'
 
 ```
