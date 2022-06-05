@@ -2,6 +2,8 @@
 
 This utility runs in Google Cloud Functions and allows for the remote update of DNS records from dynamic clients using a key.
 
+Support for IPv4 and IPv6
+
 ## Basic usage
 
 Configure the application using ENV variables (Preferably with Secrets mounted at runtime)  
@@ -22,9 +24,15 @@ The following configuration is required:
       domain: <domain>
 ```
 
-Call the function using the below format:  
+Call the function using the below format (example.sh):  
 ```
-curl -X POST \
-    -d 'host=<Host name>&ip=<IP Address>&key=<API service key>' \
-    http://localhost:8080/records
+#!/bin/sh
+
+IPADDRESS_V4=`curl https://api.ipify.org/?format=plain` &&
+IPADDRESS_V6=`curl https://api64.ipify.org/?format=plain` &&
+
+
+# example.com
+curl -X POST <Function URL> -H "Content-Type:application/json" --data '{"host":"example.com.", "ipv4":"'$IPADDRESS_V4'", "ipv6":"'$IPADDRESS_V6'", "key":"<API service key>"}'
+
 ```
