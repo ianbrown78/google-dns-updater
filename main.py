@@ -93,8 +93,6 @@ def main(request):
 
     if a_record_changed or aaaa_record_changed:
         execute_change_set(changes)
-    else:
-        ret_val += "No records changed.\n"
 
     return ret_val
 
