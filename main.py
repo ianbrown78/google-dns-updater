@@ -30,9 +30,6 @@ zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
 
 records = ""
 changes = zone.changes()
-a_record_set = False
-aaaa_record_set = False
-ret_val = ""
 
 
 def page_not_found(e):
@@ -46,6 +43,10 @@ def page_unauthorized(e):
 
 
 def main(request):
+    a_record_set = False
+    aaaa_record_set = False
+    ret_val = ""
+    
     logging.info("Update request started.")
 
     request_args = request.get_json(silent=True)
