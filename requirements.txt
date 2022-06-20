@@ -1,4 +1,4 @@
-flask==2.0.1
+flask==2.1.2
 google-cloud-dns==0.34.0
 google-cloud-logging==2.5.0
 google-oauth==1.0.1
