@@ -43,9 +43,11 @@ def page_unauthorized(e):
 
 
 def main(request):
+    a_record_found = False
+    aaaa_record_found = False
     a_record_changed = False
     aaaa_record_changed = False
-    ret_val = "No matching records.\n"
+    ret_val = ""
     
     logging.info("Update request started.")
 
@@ -90,6 +92,9 @@ def main(request):
                     ret_val += "IPv6 changed successful.\n"
                 else:
                     ret_val += "IPv6 Record up to date.\n"
+
+    if not (a_record_found or aaaa_record_found):
+        ret_val = "No matching records.\n"
 
     if a_record_changed or aaaa_record_changed:
         execute_change_set(changes)
