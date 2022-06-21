@@ -6,6 +6,7 @@ import time
 import google.auth
 from google.cloud import dns
 from google.oauth2 import service_account
+from ipaddress import ip_address, IPv4Address, IPv6Address
 
 import config
 
@@ -60,6 +61,14 @@ def main(request):
         ipv6 = request_args['ipv6']
         key = request_args['key']
 
+    if ipv4 and not (validIPv4Address(ipv4)):
+        ipv4 = ""
+        ret_val = "IPv4 not valid.\n"
+
+    if ipv6 and not (validIPv6Address(ipv4)):
+        ipv6 = ""
+        ret_val = "IPv6 not valid.\n"
+
     # Check we have the required parameters
     if not (host and key and (ipv4 or ipv6)):
         return page_not_found(404)
@@ -81,9 +90,9 @@ def main(request):
                     add_to_change_set(record, 'delete')
                     add_to_change_set(create_record_set(host, record.record_type, ipv4), 'create')
                     a_record_changed = True
-                    ret_val = "IPv4 changed successful.\n"
+                    ret_val += "IPv4 changed successful.\n"
                 else:
-                    ret_val = "IPv4 record up to date.\n"
+                    ret_val += "IPv4 record up to date.\n"
         if record.name == host and record.record_type == 'AAAA' and ipv6:
             aaaa_record_found = True
             for data in record.rrdatas:
@@ -110,6 +119,19 @@ def check_key(key):
         return True
     else:
         logging.error("Key received from client is incorrect.")
+        return False
+
+
+def validIPv4Address(IP: str):
+    try:
+        return True if type(ip_address(IP)) is IPv4Address else False
+    except ValueError:
+        return False
+
+def validIPv6Address(IP: str):
+    try:
+        return True if type(ip_address(IP)) is IPv6Address else False
+    except ValueError:
         return False
 
 
