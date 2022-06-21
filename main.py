@@ -63,11 +63,11 @@ def main(request):
 
     if ipv4 and not (validIPv4Address(ipv4)):
         ipv4 = ""
-        ret_val = "IPv4 not valid.\n"
+        logging.info("Given IPv4 {} is not valid".format(ipv4))
 
-    if ipv6 and not (validIPv6Address(ipv4)):
+    if ipv6 and not (validIPv6Address(ipv6)):
         ipv6 = ""
-        ret_val = "IPv6 not valid.\n"
+        logging.info("Given IPv6 {} is not valid".format(ipv6))
 
     # Check we have the required parameters
     if not (host and key and (ipv4 or ipv6)):
