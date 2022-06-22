@@ -6,6 +6,7 @@ import time
 import google.auth
 from google.cloud import dns
 from google.oauth2 import service_account
+from ipaddress import ip_address, IPv4Address, IPv6Address
 
 import config
 
@@ -30,7 +31,6 @@ zone = client.zone(cfg.gcpDnsZoneName, cfg.gcpDnsDomain)
 
 records = ""
 changes = zone.changes()
-ret_val = "No matching records."
 
 
 def page_not_found(e):
@@ -44,6 +44,12 @@ def page_unauthorized(e):
 
 
 def main(request):
+    a_record_found = False
+    aaaa_record_found = False
+    a_record_changed = False
+    aaaa_record_changed = False
+    ret_val = ""
+    
     logging.info("Update request started.")
 
     request_args = request.get_json(silent=True)
@@ -55,8 +61,16 @@ def main(request):
         ipv6 = request_args['ipv6']
         key = request_args['key']
 
+    if ipv4 and not (validIPv4Address(ipv4)):
+        logging.info("Given IPv4 {} is not valid".format(ipv4))
+        ipv4 = ""
+
+    if ipv6 and not (validIPv6Address(ipv6)):
+        logging.info("Given IPv6 {} is not valid".format(ipv6))
+        ipv6 = ""
+
     # Check we have the required parameters
-    if not (host and key and ipv4):
+    if not (host and key and (ipv4 or ipv6)):
         return page_not_found(404)
 
     # Check the key
@@ -69,24 +83,32 @@ def main(request):
 
     # Check for matching records
     for record in records:
-        if host == record.name and record.record_type == 'A' and ipv4:
+        if record.name == host and record.record_type == 'A' and ipv4:
+            a_record_found = True
             for data in record.rrdatas:
                 if test_for_record_change(data, ipv4):
                     add_to_change_set(record, 'delete')
                     add_to_change_set(create_record_set(host, record.record_type, ipv4), 'create')
-                    execute_change_set(changes)
-                    ret_val = "IPv4 changed successful.\n"
+                    a_record_changed = True
+                    ret_val += "IPv4 changed successful.\n"
                 else:
-                    ret_val = "IPv4 record up to date.\n"
-        if host == record.name and record.record_type == 'AAAA' and ipv6:
+                    ret_val += "IPv4 record up to date.\n"
+        if record.name == host and record.record_type == 'AAAA' and ipv6:
+            aaaa_record_found = True
             for data in record.rrdatas:
                 if test_for_record_change(data, ipv6):
                     add_to_change_set(record, 'delete')
                     add_to_change_set(create_record_set(host, record.record_type, ipv6), 'create')
-                    execute_change_set(changes)
+                    aaaa_record_changed = True
                     ret_val += "IPv6 changed successful.\n"
                 else:
                     ret_val += "IPv6 Record up to date.\n"
+
+    if not (a_record_found or aaaa_record_found):
+        ret_val = "No matching records.\n"
+
+    if a_record_changed or aaaa_record_changed:
+        execute_change_set(changes)
 
     return ret_val
 
@@ -97,6 +119,19 @@ def check_key(key):
         return True
     else:
         logging.error("Key received from client is incorrect.")
+        return False
+
+
+def validIPv4Address(ip):
+    try:
+        return True if type(ip_address(ip)) is IPv4Address else False
+    except ValueError:
+        return False
+
+def validIPv6Address(ip):
+    try:
+        return True if type(ip_address(ip)) is IPv6Address else False
+    except ValueError:
         return False
 
 
